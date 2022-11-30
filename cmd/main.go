@@ -15,7 +15,7 @@ func main() {
 
 func startServer(handler func(http.ResponseWriter, *http.Request)){
 	http.HandleFunc("/", handler)
-	log.Printf("starting server....")
+	log.Printf("starting server...")
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
 
@@ -28,6 +28,6 @@ func handler(w http.ResponseWriter, r *http.Request){
 	resp := fmt.Sprintf("Hello from %s", host)
 	_, err = w.Write([]byte(resp))
 	if err != nil {
-		log.Panicf("not able to write http output: %s", err)
+		log.Panicf("unfortunately, not able to write http output: %s", err)
 	}
 }
