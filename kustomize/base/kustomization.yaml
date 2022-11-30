@@ -8,4 +8,4 @@ namespace: hello-gitops
 images:
 - name: hello-gitops
   newName: vverbytskyi/hello-gitops
-  newTag: e03ae24a7d855d945a73275e6d8677e1299108a3
+  newTag: cc1766eb3cc305b8de80f3126121c4e059c3ccb4
