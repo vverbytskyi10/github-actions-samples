@@ -118,7 +118,6 @@ jobs:
       run: |
         kubectl apply -k k8s/ 
 
-
     - name: Remove old namespace
       run: |
         namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
