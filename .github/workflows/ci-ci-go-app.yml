@@ -7,17 +7,9 @@ on:
     branches: [ fature/cicd ]
 
 jobs:
-  validate-yaml:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Validate Workflow YAML
-        run: yamllint ./github/workflows/ci-ci-go-app.yml
-
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: validate-yaml
     
     steps:
     - name: Set up Go 1.x
