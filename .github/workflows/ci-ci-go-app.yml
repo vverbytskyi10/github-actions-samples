@@ -107,12 +107,12 @@ jobs:
         kustomize-version: "3.6.1"
 
     - name: Update Kubernetes resources
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          cd kustomize/base
-          kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
-          cat kustomization.yaml
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: |
+        cd kustomize/base
+        kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
+        cat kustomization.yaml
 
     # - name: Deploy updated Kubernetes resources
     #   run: |
