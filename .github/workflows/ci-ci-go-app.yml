@@ -10,8 +10,8 @@ jobs:
   validate-yaml:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate YAML file
       - uses: actions/checkout@v2
+      - name: Validate YAML file
         run: yamllint ci-ci-go-app.yml
 
   # build:
