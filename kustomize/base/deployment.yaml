@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: hello-gitops
-  name: hello-gitops
+    app: hello-gitops-cloud-deploy
+  name: hello-gitops-cloud-deploy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-gitops
+      app: hello-gitops-cloud-deploy
   template:
     metadata:
       labels:
-        app: hello-gitops
+        app: hello-gitops-cloud-deploy
     spec:
       containers:
-        - image: hello-gitops
-          name: hello-gitops
+        - image: hello-gitops-cloud-deploy
+          name: hello-gitops-cloud-deploy
           ports:
             - name: http
               containerPort: 8080

@@ -4,8 +4,8 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingress.yaml
-namespace: hello-gitops
+namespace: hello-gitops-cloud-deploy
 images:
-- name: hello-gitops
-  newName: vverbytskyi/hello-gitops
+- name: hello-gitops-cloud-deploy
+  newName: vverbytskyi/hello-gitops-cloud-deploy
   newTag: bf8979c058544dc6c7de400e70922ea37e399618
