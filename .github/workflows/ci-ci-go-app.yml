@@ -14,136 +14,136 @@ jobs:
         uses: actions/checkout@v2
         run: yamllint ci-ci-go-app.yml
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: validate-yaml
+  # build:
+  #   name: Build
+  #   runs-on: ubuntu-latest
+  #   needs: validate-yaml
     
-    steps:
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.14
+  #   steps:
+  #   - name: Set up Go 1.x
+  #     uses: actions/setup-go@v2
+  #     with:
+  #       go-version: ^1.14
       
-    - name: Check out code
-      uses: actions/checkout@v2
+  #   - name: Check out code
+  #     uses: actions/checkout@v2
 
-    - name: Test
-      run: |
-        CGO_ENABLED=0 go test ./...
+  #   - name: Test
+  #     run: |
+  #       CGO_ENABLED=0 go test ./...
 
-    - name: Set Up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
+  #   - name: Set Up Docker Buildx
+  #     id: buildx
+  #     uses: docker/setup-buildx-action@v1
 
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
+  #   - name: Cache Docker layers
+  #     uses: actions/cache@v2
+  #     with:
+  #       path: /tmp/.buildx-cache
+  #       key: ${{ runner.os }}-buildx-${{ github.sha }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-buildx-
 
-    - uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+  #   - uses: docker/login-action@v1
+  #     with:
+  #       username: ${{ secrets.DOCKER_USERNAME }}
+  #       password: ${{ secrets.DOCKER_PASSWORD }}
         
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: Dockerfile
-        builder: ${{ steps.buildx.outputs.name }}
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/hello-gitops:${{ github.sha }}, ${{ secrets.DOCKER_USERNAME }}/hello-gitops-cloud-deploy:latest
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache
+  #   - name: Build and push Docker image
+  #     uses: docker/build-push-action@v2
+  #     with:
+  #       context: .
+  #       file: Dockerfile
+  #       builder: ${{ steps.buildx.outputs.name }}
+  #       push: true
+  #       tags: ${{ secrets.DOCKER_USERNAME }}/hello-gitops:${{ github.sha }}, ${{ secrets.DOCKER_USERNAME }}/hello-gitops-cloud-deploy:latest
+  #       cache-from: type=local,src=/tmp/.buildx-cache
+  #       cache-to: type=local,dest=/tmp/.buildx-cache
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
+  # deploy:
+  #   name: Deploy
+  #   runs-on: ubuntu-latest
+  #   needs: build
 
-    env:
-      PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-      GKE_CLUSTER: my-first-cluster-1
-      GKE_REGION: us-central1
+  #   env:
+  #     PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  #     GKE_CLUSTER: my-first-cluster-1
+  #     GKE_REGION: us-central1
 
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Check out code
+  #     uses: actions/checkout@v2
 
-    - name: Setup Kustomize
-      uses: imranismail/setup-kustomize@v1
-      with:
-        kustomize-version: "3.6.1"
+  #   - name: Setup Kustomize
+  #     uses: imranismail/setup-kustomize@v1
+  #     with:
+  #       kustomize-version: "3.6.1"
 
-    - name: Authenticate to Google Cloud
-      uses: 'google-github-actions/auth@v0'
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+  #   - name: Authenticate to Google Cloud
+  #     uses: 'google-github-actions/auth@v0'
+  #     with:
+  #       credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0
-
-
-    - name: Get the GKE credentials so we can deploy to the cluster
-      run: |
-        gcloud container clusters get-credentials "$GKE_CLUSTER" --region "$GKE_REGION"
+  #   - name: Set up Cloud SDK
+  #     uses: google-github-actions/setup-gcloud@v0
 
 
-    - name: Create namespace & set in Kustomize
-      run: |
-         namespacePresentBlue=`kubectl get ns | grep go-app-blue | wc -l`
-         namespacePresentGreen=`kubectl get ns | grep go-app-green | wc -l`
-         if [ $namespacePresentBlue -eq 0 ]
-         then
-            kubectl create ns go-app-blue
-            cd k8s
-            kustomize edit set namespace python-app-blue
-            echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
-            echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
-         elif [ $namespacePresentGreen -eq 0 ]
-         then
-            kubectl create ns go-app-green
-            cd k8s
-            kustomize edit set namespace go-app-green
-            echo "NEW_NAMESPACE=go-app-green" >> $GITHUB_ENV
-            echo "OLD_NAMESPACE=go-app-blue" >> $GITHUB_ENV
-         else
-            echo "Both Blue and Green namespaces are present! Exiting"
-            exit 1
-         fi
-
-   - name: Update Kubernetes resources
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      run: |
-       cd k8s
-       kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
-       cat kustomization.yaml
-
-    - name: Deploy updated Kubernetes resources
-      run: |
-        kubectl apply -k k8s/ 
+  #   - name: Get the GKE credentials so we can deploy to the cluster
+  #     run: |
+  #       gcloud container clusters get-credentials "$GKE_CLUSTER" --region "$GKE_REGION"
 
 
-    - name: Remove old namespace
-      run: |
-        namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
-        if [ $namespacePresentOld -eq 1 ]
-        then
-          kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
-        fi
+  #   - name: Create namespace & set in Kustomize
+  #     run: |
+  #        namespacePresentBlue=`kubectl get ns | grep go-app-blue | wc -l`
+  #        namespacePresentGreen=`kubectl get ns | grep go-app-green | wc -l`
+  #        if [ $namespacePresentBlue -eq 0 ]
+  #        then
+  #           kubectl create ns go-app-blue
+  #           cd k8s
+  #           kustomize edit set namespace python-app-blue
+  #           echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
+  #           echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
+  #        elif [ $namespacePresentGreen -eq 0 ]
+  #        then
+  #           kubectl create ns go-app-green
+  #           cd k8s
+  #           kustomize edit set namespace go-app-green
+  #           echo "NEW_NAMESPACE=go-app-green" >> $GITHUB_ENV
+  #           echo "OLD_NAMESPACE=go-app-blue" >> $GITHUB_ENV
+  #        else
+  #           echo "Both Blue and Green namespaces are present! Exiting"
+  #           exit 1
+  #        fi
+
+  #  - name: Update Kubernetes resources
+  #     env:
+  #       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  #     run: |
+  #      cd k8s
+  #      kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+  #      cat kustomization.yaml
+
+  #   - name: Deploy updated Kubernetes resources
+  #     run: |
+  #       kubectl apply -k k8s/ 
+
+
+  #   - name: Remove old namespace
+  #     run: |
+  #       namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
+  #       if [ $namespacePresentOld -eq 1 ]
+  #       then
+  #         kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
+  #       fi
         
-    - name: Commit files
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -am "Bump docker tag"
+  #   - name: Commit files
+  #     run: |
+  #       git config --local user.email "action@github.com"
+  #       git config --local user.name "GitHub Action"
+  #       git commit -am "Bump docker tag"
 
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+  #   - name: Push changes
+  #     uses: ad-m/github-push-action@master
+  #     with:
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
