@@ -4,8 +4,8 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingress.yaml
-namespace: go-app-blue
+namespace: go-app-green
 images:
 - name: hello-gitops-cloud-deploy
   newName: vverbytskyi/hello-gitops-cloud-deploy
-  newTag: bf8979c058544dc6c7de400e70922ea37e399618
+  newTag: 7344390200b97703c42c1978fef34f842a96fff7
