@@ -106,17 +106,17 @@ jobs:
             exit 1
          fi
 
-  #  - name: Update Kubernetes resources
-  #     env:
-  #       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  #     run: |
-  #      cd k8s
-  #      kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
-  #      cat kustomization.yaml
+   - name: Update Kubernetes resources
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: |
+       cd kustomize/base
+       kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
+       cat kustomization.yaml
 
-  #   - name: Deploy updated Kubernetes resources
-  #     run: |
-  #       kubectl apply -k k8s/ 
+    - name: Deploy updated Kubernetes resources
+      run: |
+        kubectl apply -k kustomize/base 
 
     # - name: Remove old namespace
     #   run: |
