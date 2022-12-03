@@ -8,4 +8,4 @@ namespace: go-app-blue
 images:
 - name: hello-gitops-cloud-deploy
   newName: vverbytskyi/hello-gitops-cloud-deploy
-  newTag: 83310079679352a7e435d799613fcb9226d954d4
+  newTag: f91826b1f991d742fd1da06a4a87d87cef881c2d
