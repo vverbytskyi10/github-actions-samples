@@ -83,57 +83,57 @@ jobs:
       run: |
         gcloud container clusters get-credentials "$GKE_CLUSTER" --region "$GKE_REGION"
 
-    # - name: Create namespace & set in Kustomize
-    #   run: |
-    #      namespacePresentBlue=`kubectl get ns | grep go-app-blue | wc -l`
-    #      namespacePresentGreen=`kubectl get ns | grep go-app-green | wc -l`
-    #      if [ $namespacePresentBlue -eq 0 ]
-    #      then
-    #         kubectl create ns go-app-blue
-    #         cd k8s
-    #         kustomize edit set namespace python-app-blue
-    #         echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
-    #         echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
-    #      elif [ $namespacePresentGreen -eq 0 ]
-    #      then
-    #         kubectl create ns go-app-green
-    #         cd k8s
-    #         kustomize edit set namespace go-app-green
-    #         echo "NEW_NAMESPACE=go-app-green" >> $GITHUB_ENV
-    #         echo "OLD_NAMESPACE=go-app-blue" >> $GITHUB_ENV
-    #      else
-    #         echo "Both Blue and Green namespaces are present! Exiting"
-    #         exit 1
-    #      fi
+    - name: Create namespace & set in Kustomize
+      run: |
+         namespacePresentBlue=`kubectl get ns | grep go-app-blue | wc -l`
+         namespacePresentGreen=`kubectl get ns | grep go-app-green | wc -l`
+         if [ $namespacePresentBlue -eq 0 ]
+         then
+            kubectl create ns go-app-blue
+            cd k8s
+            kustomize edit set namespace python-app-blue
+            echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
+            echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
+         elif [ $namespacePresentGreen -eq 0 ]
+         then
+            kubectl create ns go-app-green
+            cd k8s
+            kustomize edit set namespace go-app-green
+            echo "NEW_NAMESPACE=go-app-green" >> $GITHUB_ENV
+            echo "OLD_NAMESPACE=go-app-blue" >> $GITHUB_ENV
+         else
+            echo "Both Blue and Green namespaces are present! Exiting"
+            exit 1
+         fi
 
-  #  - name: Update Kubernetes resources
-  #     env:
-  #       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  #     run: |
-  #      cd k8s
-  #      kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
-  #      cat kustomization.yaml
+   - name: Update Kubernetes resources
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: |
+       cd k8s
+       kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
+       cat kustomization.yaml
 
-  #   - name: Deploy updated Kubernetes resources
-  #     run: |
-  #       kubectl apply -k k8s/ 
+    - name: Deploy updated Kubernetes resources
+      run: |
+        kubectl apply -k k8s/ 
 
 
-  #   - name: Remove old namespace
-  #     run: |
-  #       namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
-  #       if [ $namespacePresentOld -eq 1 ]
-  #       then
-  #         kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
-  #       fi
+    - name: Remove old namespace
+      run: |
+        namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
+        if [ $namespacePresentOld -eq 1 ]
+        then
+          kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
+        fi
         
-  #   - name: Commit files
-  #     run: |
-  #       git config --local user.email "action@github.com"
-  #       git config --local user.name "GitHub Action"
-  #       git commit -am "Bump docker tag"
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -am "Bump docker tag"
 
-  #   - name: Push changes
-  #     uses: ad-m/github-push-action@master
-  #     with:
-  #       github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
