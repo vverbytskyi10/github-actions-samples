@@ -133,6 +133,6 @@ jobs:
         git commit -am "Bump docker tag"
 
     - name: Push changes
-      uses: ad-m/github-push-action@feature/cicd
+      uses: ad-m/github-push-action@fature/cicd
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }} 
