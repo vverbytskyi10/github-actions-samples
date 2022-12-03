@@ -114,25 +114,25 @@ jobs:
         kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
         cat kustomization.yaml
 
-    # - name: Deploy updated Kubernetes resources
-    #   run: |
-    #     kubectl apply -k kustomize/base 
+    - name: Deploy updated Kubernetes resources
+      run: |
+        kubectl apply -k kustomize/base 
 
-    # - name: Remove old namespace
-    #   run: |
-    #     namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
-    #     if [ $namespacePresentOld -eq 1 ]
-    #     then
-    #       kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
-    #     fi
+    - name: Remove old namespace
+      run: |
+        namespacePresentOld=`kubectl get ns | grep ${{ env.OLD_NAMESPACE }} | wc -l`
+        if [ $namespacePresentOld -eq 1 ]
+        then
+          kubectl delete ns ${{ env.OLD_NAMESPACE }} --wait=true
+        fi
         
-    # - name: Commit files
-    #   run: |
-    #     git config --local user.email "action@github.com"
-    #     git config --local user.name "GitHub Action"
-    #     git commit -am "Bump docker tag"
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -am "Bump docker tag"
 
-    # - name: Push changes
-    #   uses: ad-m/github-push-action@master
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }} 
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
