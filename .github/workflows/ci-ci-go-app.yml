@@ -2,9 +2,9 @@ name: CI-CD-Go-App
 
 on:
   push:
-    branches: [ feature/cicd ]
+    branches: [ fature/cicd ]
   pull_request:
-    branches: [ feature/cicd ]
+    branches: [ fature/cicd ]
 
 jobs:
   validate-yaml:
