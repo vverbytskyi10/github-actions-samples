@@ -86,7 +86,7 @@ jobs:
          then
             kubectl create ns go-app-blue
             cd kustomize/base
-            kustomize edit set namespace python-app-blue
+            kustomize edit set namespace go-app-blue
             echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
             echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
          elif [ $namespacePresentGreen -eq 0 ]
