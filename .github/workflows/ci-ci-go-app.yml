@@ -59,8 +59,8 @@ jobs:
 
     env:
       PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-      GKE_CLUSTER: my-first-cluster-1
-      GKE_REGION: us-central1
+      GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+      GKE_REGION: ${{ secrents.GKE_ZONE }}
 
     steps:
     - name: Check out code
@@ -76,7 +76,7 @@ jobs:
 
     - name: Get the GKE credentials so we can deploy to the cluster
       run: |
-        gcloud container clusters get-credentials "$GKE_CLUSTER" --region "$GKE_REGION_U"
+        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
     - name: Create namespace & set in Kustomize
       run: |
