@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Validate Workflow YAML
-        run: yamllint ci-ci-go-app.yml
+        run: yamllint ./github/workflows/ci-ci-go-app.yml
 
   build:
     name: Build
