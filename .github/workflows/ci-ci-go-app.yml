@@ -85,14 +85,14 @@ jobs:
          if [ $namespacePresentBlue -eq 0 ]
          then
             kubectl create ns go-app-blue
-            cd k8s
+            cd kustomize/base
             kustomize edit set namespace python-app-blue
             echo "NEW_NAMESPACE=go-app-blue" >> $GITHUB_ENV
             echo "OLD_NAMESPACE=go-app-green" >> $GITHUB_ENV
          elif [ $namespacePresentGreen -eq 0 ]
          then
             kubectl create ns go-app-green
-            cd k8s
+            cd kustomize/base
             kustomize edit set namespace go-app-green
             echo "NEW_NAMESPACE=go-app-green" >> $GITHUB_ENV
             echo "OLD_NAMESPACE=go-app-blue" >> $GITHUB_ENV
@@ -108,7 +108,7 @@ jobs:
 
     - name: Update Kubernetes resources
         env:
-         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           cd kustomize/base
           kustomize edit set image hello-gitops-cloud-deploy=$DOCKER_USERNAME/hello-gitops-cloud-deploy:$GITHUB_SHA
