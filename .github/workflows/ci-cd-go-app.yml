@@ -2,9 +2,9 @@ name: CI-CD-Go-App
 
 on:
   push:
-    branches: [ cicd ]
+    branches: [ feature/cloud-deploy ]
   pull_request:
-    branches: [ cicd ]
+    branches: [ feature/cloud-deploy ]
 
 jobs:
   build:
