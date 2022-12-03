@@ -2,9 +2,9 @@ name: CI-CD-Go-App
 
 on:
   push:
-    branches: [ fature/cicd ]
+    branches: [ cicd ]
   pull_request:
-    branches: [ fature/cicd ]
+    branches: [ cicd ]
 
 jobs:
   build:
@@ -133,6 +133,6 @@ jobs:
         git commit -am "Bump docker tag"
 
     - name: Push changes
-      uses: ad-m/github-push-action@'fature/cicd'
+      uses: ad-m/github-push-action@cicd
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }} 
